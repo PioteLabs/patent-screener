@@ -1,0 +1,32 @@
+# Local project context (not public)
+CLAUDE.md
+
+# Secrets
+.env
+*.env
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+dist/
+build/
+
+# Local cache / data
+*.sqlite
+*.db
+reports/*
+!reports/.gitkeep
+ideas/*
+!ideas/.gitkeep
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/

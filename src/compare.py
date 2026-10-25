@@ -13,6 +13,7 @@ DEFAULT_MODEL = os.environ.get("ANTHROPIC_MODEL", "claude-sonnet-5-5")
 COMPARE_TOOL = {
     "name": "record_claim_comparison",
     "description": "Record an element-by-element comparison of one patent claim against the idea.",
+    "strict": True,
     "input_schema": ClaimComparison.model_json_schema(),
 }
 
@@ -27,7 +28,7 @@ Rules:
 - design_around: name the single claim element that, if the idea dropped or changed it, would most
   cleanly avoid this claim.
 Compare against claim language only. Do not consider the patent's title or abstract.
-Call record_claim_comparison with the result."""
+You must call the record_claim_comparison tool with the result; do not reply in plain text."""
 
 
 def compare_claim(
@@ -47,7 +48,6 @@ def compare_claim(
         max_tokens=2048,
         system=SYSTEM_PROMPT,
         tools=[COMPARE_TOOL],
-        tool_choice={"type": "tool", "name": "record_claim_comparison"},
         messages=[{"role": "user", "content": user_message}],
     )
     if tracker is not None:

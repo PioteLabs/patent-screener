@@ -14,14 +14,15 @@ DEFAULT_MODEL = os.environ.get("ANTHROPIC_MODEL", "claude-sonnet-5-5")
 EXTRACT_TOOL = {
     "name": "record_idea_breakdown",
     "description": "Record the structured breakdown of a product idea for patent screening.",
+    "strict": True,
     "input_schema": IdeaBreakdown.model_json_schema(),
 }
 
 SYSTEM_PROMPT = """You break a product idea into discrete elements for patent prior-art screening.
 Identify components, relationships between components, and functions. Be literal and specific;
 do not invent elements the idea text does not describe. Generate keyword search terms including
-synonyms, and your best guess at relevant CPC classification codes. Call record_idea_breakdown
-with the result."""
+synonyms, and your best guess at relevant CPC classification codes. You must call the
+record_idea_breakdown tool with the result; do not reply in plain text."""
 
 
 def extract_idea(
@@ -35,7 +36,6 @@ def extract_idea(
         max_tokens=2048,
         system=SYSTEM_PROMPT,
         tools=[EXTRACT_TOOL],
-        tool_choice={"type": "tool", "name": "record_idea_breakdown"},
         messages=[{"role": "user", "content": idea_text}],
     )
     if tracker is not None:

@@ -4,16 +4,24 @@ from __future__ import annotations
 from enum import Enum
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
-class IdeaElement(BaseModel):
+class StrictModel(BaseModel):
+    """Base for any model used as a tool input_schema: Claude's strict tool
+    mode requires additionalProperties: false on every object, which pydantic
+    only emits when extra fields are forbidden."""
+
+    model_config = ConfigDict(extra="forbid")
+
+
+class IdeaElement(StrictModel):
     name: str = Field(description="Short label for this element, e.g. 'belt-loop anchor'")
     description: str = Field(description="What the element is or does")
     kind: Literal["component", "relationship", "function"]
 
 
-class IdeaBreakdown(BaseModel):
+class IdeaBreakdown(StrictModel):
     summary: str = Field(description="One-sentence summary of the idea")
     elements: list[IdeaElement]
     keywords: list[str] = Field(description="Search keywords, including synonyms")
@@ -48,13 +56,13 @@ class ClaimData(BaseModel):
     independent_claims: list[str]
 
 
-class ElementMatch(BaseModel):
+class ElementMatch(StrictModel):
     claim_element: str
     presence: Literal["present", "absent", "unclear"]
     note: str = Field(description="Why it's present/absent/unclear; equivalents risk if relevant")
 
 
-class ClaimComparison(BaseModel):
+class ClaimComparison(StrictModel):
     claim_text: str
     reads_on_idea: bool = Field(description="True only if every element is present")
     elements: list[ElementMatch]

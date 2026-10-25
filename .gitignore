@@ -30,3 +30,6 @@ ideas/*
 .DS_Store
 .vscode/
 .idea/
+
+# Local tooling (absolute paths, machine-specific)
+.claude/

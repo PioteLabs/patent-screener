@@ -7,6 +7,7 @@ import os
 import anthropic
 
 from models import IdeaBreakdown
+from usage import UsageTracker
 
 DEFAULT_MODEL = os.environ.get("ANTHROPIC_MODEL", "claude-sonnet-5-5")
 
@@ -23,7 +24,11 @@ synonyms, and your best guess at relevant CPC classification codes. Call record_
 with the result."""
 
 
-def extract_idea(idea_text: str, client: anthropic.Anthropic | None = None) -> IdeaBreakdown:
+def extract_idea(
+    idea_text: str,
+    client: anthropic.Anthropic | None = None,
+    tracker: UsageTracker | None = None,
+) -> IdeaBreakdown:
     client = client or anthropic.Anthropic()
     response = client.messages.create(
         model=DEFAULT_MODEL,
@@ -33,6 +38,8 @@ def extract_idea(idea_text: str, client: anthropic.Anthropic | None = None) -> I
         tool_choice={"type": "tool", "name": "record_idea_breakdown"},
         messages=[{"role": "user", "content": idea_text}],
     )
+    if tracker is not None:
+        tracker.record(DEFAULT_MODEL, response.usage.input_tokens, response.usage.output_tokens)
     for block in response.content:
         if block.type == "tool_use" and block.name == "record_idea_breakdown":
             return IdeaBreakdown.model_validate(block.input)

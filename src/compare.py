@@ -6,6 +6,7 @@ import os
 import anthropic
 
 from models import ClaimComparison, IdeaBreakdown
+from usage import UsageTracker
 
 DEFAULT_MODEL = os.environ.get("ANTHROPIC_MODEL", "claude-sonnet-5-5")
 
@@ -29,7 +30,12 @@ Compare against claim language only. Do not consider the patent's title or abstr
 Call record_claim_comparison with the result."""
 
 
-def compare_claim(idea: IdeaBreakdown, claim_text: str, client: anthropic.Anthropic | None = None) -> ClaimComparison:
+def compare_claim(
+    idea: IdeaBreakdown,
+    claim_text: str,
+    client: anthropic.Anthropic | None = None,
+    tracker: UsageTracker | None = None,
+) -> ClaimComparison:
     client = client or anthropic.Anthropic()
     idea_description = "\n".join(f"- {e.name}: {e.description}" for e in idea.elements)
     user_message = (
@@ -44,6 +50,8 @@ def compare_claim(idea: IdeaBreakdown, claim_text: str, client: anthropic.Anthro
         tool_choice={"type": "tool", "name": "record_claim_comparison"},
         messages=[{"role": "user", "content": user_message}],
     )
+    if tracker is not None:
+        tracker.record(DEFAULT_MODEL, response.usage.input_tokens, response.usage.output_tokens)
     for block in response.content:
         if block.type == "tool_use" and block.name == "record_claim_comparison":
             return ClaimComparison.model_validate(block.input)

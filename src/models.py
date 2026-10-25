@@ -38,6 +38,10 @@ class PatentCandidate(BaseModel):
     jurisdiction: str = "US"
     source: str = Field(description="Which adapter found this candidate")
 
+    def reference_url(self) -> str:
+        """Public Google Patents page for this patent number, for further review."""
+        return f"https://patents.google.com/patent/{self.patent_number}"
+
 
 class ClaimData(BaseModel):
     patent_number: str

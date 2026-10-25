@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Patent Screening Report</title>
+{% include "_style.html" %}
+</head>
+<body>
+  <div class="titlebar">PATENT-SCREENER.EXE &mdash; REPORT</div>
+  <div class="wrap">
+    <h1>Patent Screening Report</h1>
+    <p class="meta">Generated: {{ generated }}</p>
+    <p class="meta">Idea: {{ idea.summary }}</p>
+
+    <h2>Coverage</h2>
+    <ul class="meta">
+      {% for source, count in sources_searched.items() %}
+      <li>{{ source }}: {{ count }} result(s)</li>
+      {% endfor %}
+      {% if sources_searched|length <= 1 %}
+      <li>Note: only one source was searched. Coverage is thin.</li>
+      {% endif %}
+    </ul>
+
+    <h2>Ranked matches</h2>
+    {% from "_patent_card.html" import render_entry %}
+    {% for entry in entries %}
+      {{ render_entry(entry) }}
+    {% endfor %}
+
+    <p class="disclaimer">{{ disclaimer }}</p>
+  </div>
+</body>
+</html>

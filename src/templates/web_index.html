@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Patent Screener</title>
+{% include "_style.html" %}
+</head>
+<body>
+  <div class="titlebar">PATENT-SCREENER.EXE &mdash; LOCALHOST</div>
+  <div class="wrap">
+    <h1>Screen an idea</h1>
+    <p class="meta">Describe your product idea in plain English. It'll be broken into elements,
+      searched against USPTO patents, and compared claim by claim.</p>
+
+    <form method="post" action="/screen" onsubmit="document.getElementById('submit-btn').textContent='Screening... this can take a minute'; document.getElementById('submit-btn').disabled=true;">
+      <textarea name="idea_text" placeholder="e.g. A strap that anchors to a belt loop, with a bag that clips on and off..." required></textarea>
+      <br>
+      <button class="btn" id="submit-btn" type="submit">Screen idea</button>
+    </form>
+
+    <p class="disclaimer">Screening aid only. Not legal advice. Consult a patent attorney before selling.</p>
+  </div>
+</body>
+</html>

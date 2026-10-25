@@ -1,0 +1,120 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: {{ bg }};
+    --text: {{ text }};
+    --pink: {{ pink }};
+    --pink-dark: {{ pink_dark }};
+    --cyan: {{ cyan }};
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'VT323', monospace;
+    font-size: 20px;
+    margin: 0;
+    padding: 0 0 4rem;
+    background-image:
+      linear-gradient(rgba(5,215,250,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(5,215,250,0.05) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+  .titlebar {
+    background: #1a0f33;
+    border-bottom: 2px solid var(--cyan);
+    padding: 0.6rem 1rem;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 11px;
+    color: var(--pink);
+    letter-spacing: 1px;
+  }
+  .wrap { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+  h1 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 22px;
+    color: var(--text);
+    line-height: 1.6;
+  }
+  h2 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 14px;
+    color: var(--cyan);
+    margin-top: 2.5rem;
+    border-bottom: 2px solid var(--cyan);
+    padding-bottom: 0.5rem;
+  }
+  a { color: var(--cyan); }
+  .meta { color: rgba(243,236,255,0.75); margin-bottom: 0.3rem; }
+  .card {
+    border: 2px solid var(--pink);
+    background: rgba(255,46,136,0.05);
+    padding: 1.2rem 1.4rem;
+    margin: 1.5rem 0;
+  }
+  .card h3 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 13px;
+    color: var(--pink);
+    margin-top: 0;
+  }
+  .card h3 a { color: var(--pink); text-decoration: none; }
+  .card h3 a:hover { text-decoration: underline; }
+  .badge {
+    display: inline-block;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid var(--cyan);
+    color: var(--cyan);
+  }
+  .badge.low-risk { border-color: #4ade80; color: #4ade80; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 18px; }
+  th, td { text-align: left; padding: 0.4rem 0.6rem; border-bottom: 1px solid rgba(243,236,255,0.2); }
+  th { color: var(--cyan); font-family: 'Press Start 2P', monospace; font-size: 10px; }
+  .present { color: #4ade80; }
+  .absent { color: var(--pink); }
+  .unclear { color: #facc15; }
+  .design-around { color: var(--cyan); margin-top: 0.5rem; }
+  .disclaimer {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 2px dashed var(--pink);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    color: var(--pink);
+    line-height: 1.8;
+  }
+  textarea {
+    width: 100%;
+    min-height: 220px;
+    background: rgba(5,215,250,0.05);
+    border: 2px solid var(--cyan);
+    color: var(--text);
+    font-family: 'VT323', monospace;
+    font-size: 19px;
+    padding: 1rem;
+    resize: vertical;
+  }
+  .btn {
+    display: inline-block;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 12px;
+    background: var(--pink);
+    color: var(--pink-dark);
+    border: 1px solid rgba(0,0,0,0.4);
+    padding: 0.9rem 1.4rem;
+    margin-top: 1rem;
+    cursor: pointer;
+  }
+  .btn:hover { opacity: 0.9; }
+  .usage-panel {
+    border: 2px solid var(--cyan);
+    background: rgba(5,215,250,0.05);
+    padding: 1rem 1.2rem;
+    margin: 1.5rem 0;
+    font-size: 19px;
+  }
+  .usage-panel strong { color: var(--cyan); }
+</style>

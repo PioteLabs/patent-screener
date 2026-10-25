@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Patent Screener &mdash; Results</title>
+{% include "_style.html" %}
+</head>
+<body>
+  <div class="titlebar">PATENT-SCREENER.EXE &mdash; RESULTS</div>
+  <div class="wrap">
+    <h1>Results</h1>
+    <p class="meta">Idea: {{ idea.summary }}</p>
+
+    <div class="usage-panel">
+      <strong>Claude usage this run:</strong> {{ usage.calls }} call(s),
+      {{ usage.input_tokens }} input / {{ usage.output_tokens }} output tokens
+      &mdash; est. cost <strong>${{ "%.4f"|format(usage.estimated_cost_usd) }}</strong>
+      <br><span class="meta" style="font-size: 15px;">Estimate only &mdash; verify current pricing at
+        <a href="https://platform.claude.com/docs/en/about-claude/pricing" target="_blank" rel="noopener">platform.claude.com/pricing</a>.</span>
+    </div>
+
+    <h2>Coverage</h2>
+    <ul class="meta">
+      {% for source, count in sources_searched.items() %}
+      <li>{{ source }}: {{ count }} result(s)</li>
+      {% endfor %}
+      {% if sources_searched|length <= 1 %}
+      <li>Note: only one source was searched. Coverage is thin.</li>
+      {% endif %}
+      {% for msg in skipped %}
+      <li>Skipped: {{ msg }}</li>
+      {% endfor %}
+    </ul>
+
+    <h2>Ranked matches ({{ entries|length }})</h2>
+    {% from "_patent_card.html" import render_entry %}
+    {% if entries|length == 0 %}
+    <p class="meta">No candidate patents compared. Check coverage above.</p>
+    {% endif %}
+    {% for entry in entries %}
+      {{ render_entry(entry) }}
+    {% endfor %}
+
+    <p><a class="btn" href="/">Screen another idea</a></p>
+    <p class="disclaimer">Screening aid only. Not legal advice. Consult a patent attorney before selling.</p>
+  </div>
+</body>
+</html>

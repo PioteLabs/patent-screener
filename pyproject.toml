@@ -11,6 +11,10 @@ dependencies = [
     "rich>=13.8.0",
     "jinja2>=3.1.0",
     "python-dotenv>=1.0.0",
+    "fastapi>=0.115.0",
+    "starlette>=0.40.0",
+    "uvicorn>=0.30.0",
+    "python-multipart>=0.0.9",
 ]
 
 [project.optional-dependencies]
@@ -28,5 +32,5 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
-py-modules = ["cli", "extract", "compare", "report", "cache", "models", "theme"]
+py-modules = ["cli", "extract", "compare", "report", "cache", "models", "theme", "pipeline", "usage", "web"]
 packages = ["sources"]

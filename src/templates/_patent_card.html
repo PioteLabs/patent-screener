@@ -1,0 +1,31 @@
+{% macro render_entry(entry) %}
+<div class="card">
+  <h3><a href="{{ entry.candidate.reference_url() }}" target="_blank" rel="noopener">{{ entry.candidate.patent_number }} &mdash; {{ entry.candidate.title }}</a></h3>
+  <p class="meta">Assignee: {{ entry.candidate.assignee or 'unknown' }}</p>
+  <p class="meta">Filing date: {{ entry.candidate.filing_date or 'unknown' }}</p>
+  <p class="meta">
+    Status:
+    <span class="badge {% if entry.candidate.status.value in ['expired','abandoned'] %}low-risk{% endif %}">
+      {{ entry.candidate.status.value }}
+    </span>
+  </p>
+  <p class="meta">Estimated expiry: {{ entry.candidate.estimated_expiry or 'unknown' }}</p>
+  <p class="meta">Jurisdiction: {{ entry.candidate.jurisdiction }}</p>
+  <p class="meta">Overlap score: {{ "%.0f"|format(entry.overlap_score * 100) }}%</p>
+
+  {% for claim in entry.claims %}
+  <p class="meta">Claim {{ loop.index }} &mdash; reads on idea: <strong>{{ 'yes' if claim.reads_on_idea else 'no' }}</strong></p>
+  <table>
+    <tr><th>Element</th><th>Presence</th><th>Note</th></tr>
+    {% for el in claim.elements %}
+    <tr>
+      <td>{{ el.claim_element }}</td>
+      <td class="{{ el.presence }}">{{ el.presence }}</td>
+      <td>{{ el.note }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  <p class="design-around">Design-around: {{ claim.design_around }}</p>
+  {% endfor %}
+</div>
+{% endmacro %}

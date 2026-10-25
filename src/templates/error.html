@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Patent Screener &mdash; Error</title>
+{% include "_style.html" %}
+</head>
+<body>
+  <div class="titlebar">PATENT-SCREENER.EXE &mdash; ERROR</div>
+  <div class="wrap">
+    {% include "_nav.html" %}
+    <h1>Something went wrong</h1>
+    <p class="meta" style="color: var(--pink);">{{ error }}</p>
+    <details open>
+      <summary>Show activity</summary>
+      <div class="activity-log">{{ log | join('\n') }}</div>
+    </details>
+    <p><a class="btn" href="/">Try again</a></p>
+  </div>
+</body>
+</html>

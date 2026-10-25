@@ -33,9 +33,13 @@ pip install -e .
 patent-screener serve
 ```
 
-Open `http://127.0.0.1:8000`, paste your idea into the textarea, submit, and get a
-ranked list of matching patents with reference links and a token/cost breakdown
-for the run. Local only - do not expose this to the internet, it has no auth.
+Open `http://127.0.0.1:8000`, paste your idea into the textarea, and submit. A
+screening runs in the background; the page shows a live progress bar (extract
+-> search -> compare -> finalize) with an expandable activity log, then lands
+on a ranked list of matching patents with reference links and a token/cost
+breakdown for the run. Past runs are saved and browsable from "History"; a
+run's URL (`/runs/<id>`) is a permalink that still works after a server
+restart. Local only - do not expose this to the internet, it has no auth.
 
 **CLI:**
 
@@ -70,6 +74,8 @@ patent-screener/
     cli.py          # CLI entry point (screen, serve)
     web.py           # local FastAPI web UI
     pipeline.py       # shared extract -> search -> compare pipeline
+    jobs.py           # in-memory background job + live progress state
+    history.py        # sqlite-backed history of past runs
     extract.py      # idea -> elements + queries
     sources/        # one adapter per data source
     compare.py      # claim vs idea element comparison
@@ -87,6 +93,12 @@ patent-screener/
 - Legal opinions or infringement conclusions
 - Non-patent prior art searching
 - Filing or drafting patent applications
+
+## Roadmap
+
+- A page to set up recurring scheduled searches for recently expired patents
+  in chosen patent categories (not built yet)
+- A second data source (Lens or BigQuery) with CPC-based search
 
 ## License
 

@@ -32,5 +32,5 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
-py-modules = ["cli", "extract", "compare", "report", "cache", "models", "theme", "pipeline", "usage", "web"]
+py-modules = ["cli", "extract", "compare", "report", "cache", "models", "theme", "pipeline", "usage", "web", "jobs", "history"]
 packages = ["sources"]

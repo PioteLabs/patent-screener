@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Patent Screener &mdash; Running</title>
+{% include "_style.html" %}
+</head>
+<body>
+  <div class="titlebar">PATENT-SCREENER.EXE &mdash; RUNNING</div>
+  <div class="wrap">
+    <h1>Screening in progress</h1>
+    <p class="meta">This can take a minute or two &mdash; each candidate patent needs its own
+      comparison call. This page updates itself; you can leave it and come back, the run
+      keeps going either way.</p>
+
+    <div class="progress-label" id="phase-label">starting...</div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+    <p class="meta" id="percent-label">0%</p>
+
+    <details open>
+      <summary>Show activity</summary>
+      <div class="activity-log" id="activity-log">(waiting for the first update...)</div>
+    </details>
+  </div>
+
+  <script>
+    const jobId = {{ job_id | tojson }};
+    const logEl = document.getElementById('activity-log');
+    const fillEl = document.getElementById('progress-fill');
+    const pctEl = document.getElementById('percent-label');
+    const phaseEl = document.getElementById('phase-label');
+    const phaseNames = {extract: 'Extracting idea elements', search: 'Searching patent sources',
+                         compare: 'Fetching claims and comparing', finalize: 'Finishing up'};
+
+    async function poll() {
+      try {
+        const res = await fetch(`/runs/${jobId}/status`);
+        if (res.status === 404) { window.location.reload(); return; }
+        const data = await res.json();
+        fillEl.style.width = data.percent + '%';
+        pctEl.textContent = data.percent + '%';
+        phaseEl.textContent = phaseNames[data.phase] || data.phase;
+        if (data.log.length) { logEl.textContent = data.log.join('\n'); }
+        logEl.scrollTop = logEl.scrollHeight;
+        if (data.status === 'done' || data.status === 'error') {
+          window.location.reload();
+          return;
+        }
+      } catch (e) { /* transient fetch error, keep polling */ }
+      setTimeout(poll, 1000);
+    }
+    poll();
+  </script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Patent Screener &mdash; History</title>
+{% include "_style.html" %}
+</head>
+<body>
+  <div class="titlebar">PATENT-SCREENER.EXE &mdash; HISTORY</div>
+  <div class="wrap">
+    {% include "_nav.html" %}
+    <h1>History</h1>
+
+    {% if runs|length == 0 %}
+    <p class="meta">No past screenings yet.</p>
+    {% endif %}
+
+    {% for run in runs %}
+    <div class="card">
+      <h3><a href="/runs/{{ run.id }}">{{ run.summary }}</a></h3>
+      <p class="meta">{{ run.created_at_display }} &mdash; {{ run.num_matches }} match(es)
+        &mdash; est. cost ${{ "%.4f"|format(run.cost) }}</p>
+    </div>
+    {% endfor %}
+
+    <p class="disclaimer">Screening aid only. Not legal advice. Consult a patent attorney before selling.</p>
+  </div>
+</body>
+</html>

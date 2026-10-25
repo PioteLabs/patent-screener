@@ -42,6 +42,10 @@ def _run_in_background(job: Job) -> None:
     threading.Thread(target=worker, daemon=True).start()
 
 
+def _nav_vars() -> dict:
+    return {"today_spend": history.dashboard_stats()["cost_past_24_hours"]}
+
+
 def _results_context(idea, entries, sources_searched, skipped, usage, run_id: str | None = None) -> dict:
     return {
         "idea": idea,
@@ -51,12 +55,22 @@ def _results_context(idea, entries, sources_searched, skipped, usage, run_id: st
         "usage": usage,
         "run_id": run_id,
         **THEME_VARS,
+        **_nav_vars(),
     }
 
 
 @app.get("/", response_class=HTMLResponse)
-def index(request: Request) -> HTMLResponse:
-    return templates.TemplateResponse(request, "web_index.html", {**THEME_VARS})
+def home(request: Request) -> HTMLResponse:
+    stats = history.dashboard_stats()
+    recent_runs = history.list_runs(limit=5)
+    return templates.TemplateResponse(
+        request, "home.html", {"stats": stats, "recent_runs": recent_runs, **THEME_VARS, **_nav_vars()}
+    )
+
+
+@app.get("/new", response_class=HTMLResponse)
+def new_screening(request: Request) -> HTMLResponse:
+    return templates.TemplateResponse(request, "web_index.html", {**THEME_VARS, **_nav_vars()})
 
 
 @app.post("/screen")
@@ -74,7 +88,7 @@ def view_run(request: Request, run_id: str) -> HTMLResponse:
         record = history.get_run(run_id)
         if record is None:
             return templates.TemplateResponse(
-                request, "not_found.html", {**THEME_VARS}, status_code=404
+                request, "not_found.html", {**THEME_VARS, **_nav_vars()}, status_code=404
             )
         return templates.TemplateResponse(
             request, "web_results.html", _results_context(**record, run_id=run_id)
@@ -85,7 +99,7 @@ def view_run(request: Request, run_id: str) -> HTMLResponse:
 
     if job.status == "error":
         return templates.TemplateResponse(
-            request, "error.html", {"error": job.error, "log": job.log, **THEME_VARS}
+            request, "error.html", {"error": job.error, "log": job.log, **THEME_VARS, **_nav_vars()}
         )
 
     result = job.result
@@ -114,4 +128,4 @@ def run_status(run_id: str) -> JSONResponse:
 @app.get("/history", response_class=HTMLResponse)
 def history_list(request: Request) -> HTMLResponse:
     runs = history.list_runs()
-    return templates.TemplateResponse(request, "history.html", {"runs": runs, **THEME_VARS})
+    return templates.TemplateResponse(request, "history.html", {"runs": runs, **THEME_VARS, **_nav_vars()})

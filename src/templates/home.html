@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Patent Screener &mdash; Home</title>
+{% include "_style.html" %}
+<style>
+  .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin: 1.2rem 0 2rem; }
+  .stat-card { border: 2px solid var(--cyan); background: rgba(5,215,250,0.05); padding: 1rem 0.8rem; text-align: center; }
+  .stat-value { font-family: 'Press Start 2P', monospace; font-size: 18px; color: var(--pink); margin-bottom: 0.5rem; word-break: break-word; }
+  .stat-label { font-size: 15px; color: rgba(243,236,255,0.75); }
+  .btn-outline { background: transparent; color: var(--cyan); border-color: var(--cyan); }
+</style>
+</head>
+<body>
+  <div class="titlebar">PATENT-SCREENER.EXE &mdash; HOME</div>
+  <div class="wrap">
+    {% include "_nav.html" %}
+    <h1>Dashboard</h1>
+
+    {% if stats.total_runs == 0 %}
+    <p class="meta">No screenings yet. <a href="/new">Screen your first idea</a>.</p>
+    {% else %}
+
+    <h2>Claude spend</h2>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-value">${{ "%.4f"|format(stats.cost_past_24_hours) }}</div><div class="stat-label">Past 24 hours</div></div>
+      <div class="stat-card"><div class="stat-value">${{ "%.4f"|format(stats.cost_past_7_days) }}</div><div class="stat-label">Past 7 days</div></div>
+      <div class="stat-card"><div class="stat-value">${{ "%.4f"|format(stats.cost_past_month) }}</div><div class="stat-label">Past month</div></div>
+      <div class="stat-card"><div class="stat-value">${{ "%.4f"|format(stats.cost_past_year) }}</div><div class="stat-label">Past year</div></div>
+      <div class="stat-card"><div class="stat-value">${{ "%.4f"|format(stats.cost_all_time) }}</div><div class="stat-label">All time</div></div>
+    </div>
+    <p class="meta" style="font-size: 14px; margin-top: -1rem;">Estimates only &mdash; verify current pricing at
+      <a href="https://platform.claude.com/docs/en/about-claude/pricing" target="_blank" rel="noopener">platform.claude.com/pricing</a>.</p>
+
+    <h2>Screening activity</h2>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-value">{{ stats.total_runs }}</div><div class="stat-label">Ideas screened</div></div>
+      <div class="stat-card"><div class="stat-value">{{ stats.total_patents_screened }}</div><div class="stat-label">Patents compared</div></div>
+      <div class="stat-card"><div class="stat-value">{{ stats.conflict_free_runs }}</div><div class="stat-label">Conflict-free ideas</div></div>
+      <div class="stat-card"><div class="stat-value">{{ stats.runs_with_conflicts }}</div><div class="stat-label">Ideas with a close match</div></div>
+    </div>
+    {% endif %}
+
+    <p>
+      <a class="btn" href="/new">Screen new idea</a>
+      <a class="btn btn-outline" href="/history">View history</a>
+    </p>
+
+    {% if recent_runs %}
+    <h2>Recent</h2>
+    {% for run in recent_runs %}
+    <div class="card">
+      <h3><a href="/runs/{{ run.id }}">{{ run.summary }}</a></h3>
+      <p class="meta">{{ run.created_at_display }} &mdash; {{ run.num_matches }} match(es) &mdash; est. cost ${{ "%.4f"|format(run.cost) }}</p>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    <p class="disclaimer">Screening aid only. Not legal advice. Consult a patent attorney before selling.</p>
+  </div>
+</body>
+</html>

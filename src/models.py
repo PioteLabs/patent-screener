@@ -47,8 +47,12 @@ class PatentCandidate(BaseModel):
     source: str = Field(description="Which adapter found this candidate")
 
     def reference_url(self) -> str:
-        """Public Google Patents page for this patent number, for further review."""
-        return f"https://patents.google.com/patent/{self.patent_number}"
+        """Public Google Patents page for this patent number, for further review.
+
+        Google Patents requires the jurisdiction prefix (e.g. "US") even though
+        USPTO's own patent_number field omits it; it auto-resolves the kind code.
+        """
+        return f"https://patents.google.com/patent/{self.jurisdiction}{self.patent_number}"
 
 
 class ClaimData(BaseModel):

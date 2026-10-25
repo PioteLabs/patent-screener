@@ -26,6 +26,9 @@ class IdeaBreakdown(StrictModel):
     elements: list[IdeaElement]
     keywords: list[str] = Field(description="Search keywords, including synonyms")
     cpc_classes: list[str] = Field(description="Likely CPC classification codes, e.g. 'A45F3/04'")
+    likely_assignees: list[str] = Field(
+        description="Real companies likely to hold a patent on this, from web research; empty if none found"
+    )
 
 
 class PatentStatus(str, Enum):

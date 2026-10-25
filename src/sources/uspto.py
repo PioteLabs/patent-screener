@@ -60,14 +60,18 @@ class USPTOSource(PatentSource):
         self._files_client = httpx.Client(headers=headers, timeout=timeout, follow_redirects=True)
         self._grant_xml_url_by_number: dict[str, str] = {}
 
-    def search(self, keywords: list[str], cpc_classes: list[str]) -> list[PatentCandidate]:
+    def search(
+        self, keywords: list[str], cpc_classes: list[str], assignees: list[str] | None = None
+    ) -> list[PatentCandidate]:
         query = " OR ".join(f'"{kw}"' for kw in keywords)
         candidates: dict[str, PatentCandidate] = {}
-        for variant_query in self._query_variants(query, cpc_classes):
+        for variant_query in self._query_variants(query, cpc_classes, assignees or []):
             response = self._client.post(
                 "/search",
                 json={"q": variant_query, "pagination": {"offset": 0, "limit": 25}},
             )
+            if response.status_code == 404:
+                continue  # ODP returns 404 (not an empty 200) when a query variant matches nothing
             response.raise_for_status()
             for doc in response.json().get("patentFileWrapperDataBag", []):
                 candidate = self._parse_candidate(doc)
@@ -87,10 +91,13 @@ class USPTOSource(PatentSource):
         claims = _extract_independent_claims(response.content)
         return ClaimData(patent_number=patent_number, independent_claims=claims)
 
-    def _query_variants(self, keyword_query: str, cpc_classes: list[str]) -> list[str]:
+    def _query_variants(self, keyword_query: str, cpc_classes: list[str], assignees: list[str]) -> list[str]:
         variants = [keyword_query]
         for cpc in cpc_classes:
             variants.append(f"cpcClassificationBag:{cpc}")
+        for name in assignees:
+            safe_name = name.replace('"', "")
+            variants.append(f'applicationMetaData.firstApplicantName:"{safe_name}"')
         return variants
 
     def _parse_candidate(self, doc: dict) -> PatentCandidate | None:

@@ -7,6 +7,7 @@ from dataclasses import dataclass, field
 from compare import compare_claim, overlap_score
 from extract import extract_idea
 from models import IdeaBreakdown, PatentReportEntry
+from research import ResearchFindings, research_idea
 from sources.base import MissingAPIKeyError, PatentSource
 from sources.uspto import USPTOSource
 from usage import UsageTracker
@@ -36,10 +37,32 @@ def run_pipeline(
     tracker = UsageTracker()
     skipped: list[str] = []
 
+    progress("research", 0, 1)
+    log("Researching real-world prior art on the web...")
+    try:
+        findings = research_idea(idea_text, tracker=tracker)
+        if findings.likely_assignees or findings.technical_terms:
+            log(f"  possible competitors: {', '.join(findings.likely_assignees) or 'none'}")
+            log(f"  technical terms found: {', '.join(findings.technical_terms) or 'none'}")
+        else:
+            log(f"  {findings.notes or 'nothing relevant found'}")
+    except Exception as exc:  # noqa: BLE001 - web search may be disabled for this account
+        skipped.append(f"web research skipped: {exc}")
+        log(f"  [skip] web research failed: {exc}")
+        findings = ResearchFindings()
+    progress("research", 1, 1)
+
     progress("extract", 0, 1)
     log("Extracting idea elements with Claude...")
-    idea = extract_idea(idea_text, tracker=tracker)
+    idea = extract_idea(
+        idea_text,
+        tracker=tracker,
+        likely_assignees=findings.likely_assignees,
+        technical_terms=findings.technical_terms,
+    )
     log(f"  summary: {idea.summary}")
+    if idea.likely_assignees:
+        log(f"  will also search by assignee: {', '.join(idea.likely_assignees)}")
     progress("extract", 1, 1)
 
     progress("search", 0, 1)
@@ -57,7 +80,7 @@ def run_pipeline(
     sources_searched: dict[str, int] = {}
     for source in sources:
         try:
-            results = source.search(idea.keywords, idea.cpc_classes)
+            results = source.search(idea.keywords, idea.cpc_classes, idea.likely_assignees)
         except Exception as exc:  # noqa: BLE001 - a bad source must not kill the run
             skipped.append(f"{source.name} search failed: {exc}")
             log(f"  [skip] {source.name} failed: {exc}")

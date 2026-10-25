@@ -19,6 +19,7 @@
     <div class="usage-panel">
       <strong>Claude usage this run:</strong> {{ usage.calls }} call(s),
       {{ usage.input_tokens }} input / {{ usage.output_tokens }} output tokens
+      {% if usage.search_requests %}, {{ usage.search_requests }} web search(es){% endif %}
       &mdash; est. cost <strong>${{ "%.4f"|format(usage.estimated_cost_usd) }}</strong>
       <br><span class="meta" style="font-size: 15px;">Estimate only &mdash; verify current pricing at
         <a href="https://platform.claude.com/docs/en/about-claude/pricing" target="_blank" rel="noopener">platform.claude.com/pricing</a>.</span>

@@ -30,8 +30,9 @@
     const fillEl = document.getElementById('progress-fill');
     const pctEl = document.getElementById('percent-label');
     const phaseEl = document.getElementById('phase-label');
-    const phaseNames = {extract: 'Extracting idea elements', search: 'Searching patent sources',
-                         compare: 'Fetching claims and comparing', finalize: 'Finishing up'};
+    const phaseNames = {research: 'Researching real-world prior art', extract: 'Extracting idea elements',
+                         search: 'Searching patent sources', compare: 'Fetching claims and comparing',
+                         finalize: 'Finishing up'};
 
     async function poll() {
       try {

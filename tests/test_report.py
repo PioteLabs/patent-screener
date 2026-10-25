@@ -43,6 +43,7 @@ def _idea() -> IdeaBreakdown:
         elements=[IdeaElement(name="A", description="part A", kind="component")],
         keywords=["widget"],
         cpc_classes=["A45F3/04"],
+        likely_assignees=[],
     )
 
 

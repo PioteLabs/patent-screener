@@ -15,9 +15,10 @@ from pipeline import PipelineResult
 
 # (phase, percent width of the overall bar that phase accounts for)
 PHASE_WEIGHTS: list[tuple[str, int]] = [
+    ("research", 15),
     ("extract", 10),
-    ("search", 15),
-    ("compare", 65),
+    ("search", 10),
+    ("compare", 55),
     ("finalize", 10),
 ]
 PHASE_ORDER = [phase for phase, _ in PHASE_WEIGHTS]

@@ -1,0 +1,46 @@
+"""Break a plain-text idea into elements and search terms using Claude."""
+from __future__ import annotations
+
+import json
+import os
+
+import anthropic
+
+from models import IdeaBreakdown
+
+DEFAULT_MODEL = os.environ.get("ANTHROPIC_MODEL", "claude-sonnet-5-5")
+
+EXTRACT_TOOL = {
+    "name": "record_idea_breakdown",
+    "description": "Record the structured breakdown of a product idea for patent screening.",
+    "input_schema": IdeaBreakdown.model_json_schema(),
+}
+
+SYSTEM_PROMPT = """You break a product idea into discrete elements for patent prior-art screening.
+Identify components, relationships between components, and functions. Be literal and specific;
+do not invent elements the idea text does not describe. Generate keyword search terms including
+synonyms, and your best guess at relevant CPC classification codes. Call record_idea_breakdown
+with the result."""
+
+
+def extract_idea(idea_text: str, client: anthropic.Anthropic | None = None) -> IdeaBreakdown:
+    client = client or anthropic.Anthropic()
+    response = client.messages.create(
+        model=DEFAULT_MODEL,
+        max_tokens=2048,
+        system=SYSTEM_PROMPT,
+        tools=[EXTRACT_TOOL],
+        tool_choice={"type": "tool", "name": "record_idea_breakdown"},
+        messages=[{"role": "user", "content": idea_text}],
+    )
+    for block in response.content:
+        if block.type == "tool_use" and block.name == "record_idea_breakdown":
+            return IdeaBreakdown.model_validate(block.input)
+    raise RuntimeError("Claude did not return a structured idea breakdown")
+
+
+if __name__ == "__main__":
+    import sys
+
+    text = sys.argv[1] if len(sys.argv) > 1 else "A sample product idea."
+    print(json.dumps(extract_idea(text).model_dump(), indent=2))

@@ -1,0 +1,32 @@
+[project]
+name = "patent-screener"
+version = "0.1.0"
+description = "Screen a product idea against existing patents."
+requires-python = ">=3.11"
+dependencies = [
+    "anthropic>=0.40.0",
+    "httpx>=0.27.0",
+    "pydantic>=2.8.0",
+    "click>=8.1.0",
+    "rich>=13.8.0",
+    "jinja2>=3.1.0",
+    "python-dotenv>=1.0.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.4.0"]
+
+[project.scripts]
+patent-screener = "cli:main"
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+py-modules = ["cli", "extract", "compare", "report", "cache", "models", "theme"]
+packages = ["sources"]
